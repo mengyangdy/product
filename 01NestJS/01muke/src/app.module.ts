@@ -18,6 +18,7 @@ import { Roles } from './roles/entities/role.entity';
 import { Logs } from './logs/entities/log.entity';
 import { join } from 'path';
 import { LoggerModule } from 'nestjs-pino';
+import { AuthModule } from './auth/auth.module';
 console.log(config.get('name'));
 
 
@@ -114,7 +115,8 @@ console.log(config.get('name'));
       //   }
       // }
     }
-  })
+  }),
+  AuthModule
   ],
   controllers: [AppController],
   providers: [AppService,Logger],

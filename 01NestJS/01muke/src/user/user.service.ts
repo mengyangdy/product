@@ -9,19 +9,64 @@ import { Repository } from 'typeorm';
 export class UserService {
   constructor(@InjectRepository(User) private readonly userRepository:Repository<User>){}
   async create(user: User) {
+    // 用户名不能重复  该怎么捕获错误给前端返回？
+
    const userTmp=await this.userRepository.create(user)
    return this.userRepository.save(userTmp)
   }
 
-  findAll() {
-    return this.userRepository.find()
+  findAll(query) {
+    const {limit,page,username,gender,role} =query
+    /**
+     * SELECT * FROM user u,profile p,role r WHERE u.id = p.uid AND u.id = r.uid AND ...
+     * 
+     * SELECT * FROM user u LEFT JOIN profile p ON u.id=p.uid LEFT JOIN role r ON u.id = r.uid WHERE...
+     * 分页 SQL ==LEMIT10 OFFSET 10
+     * 
+     */
+    // return this.userRepository.find({
+    //   select:{
+    //     id:true
+    //   },
+    //   relations:{
+    //     profile:true,
+    //     roles:true
+    //   },
+    //   where:{
+    //     username,
+    //     profile:{
+    //       gender
+    //     },
+    //     roles:{
+    //       id:role
+    //     }
+    //   },
+    //   take:limit,
+    //   skip:(page - 1) * limit
+    // })
+
+    return this.userRepository.createQueryBuilder('user')
+    // innerJoin 与leftJoin的区别 
+    .innerJoinAndSelect('user.profile','profile')
+    .innerJoinAndSelect('user.roles','roles')
+    .where('user.username = :username',{username})
+    .andWhere('profile.gender = :gender',{gender})
+    .andWhere('roles.id = :role',{role})
+    .getMany()
   }
 
   findOne(id:number) {
     return this.userRepository.findOne({where:{id}})
   }
 
-  update(id: number, user:Partial<User>) {
+  async update(id: number, user:Partial<User>) {
+    const userTemp=await this.findProfile(id)
+    const newUser=this.userRepository.merge(userTemp,user)
+    // 联合模型更新 需要使用save方法 或者queryBuilder
+    return  this.userRepository.save(newUser)
+
+
+    // 下面的update方法只适用于单模型的更新 不适合有关系的模型更新
     return this.userRepository.update(id,user)
   }
 

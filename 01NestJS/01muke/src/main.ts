@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { createLogger } from 'winston';
 import * as winston from 'winston'
@@ -43,8 +43,9 @@ async function bootstrap() {
     // logger:['error','warn']
     logger: logger
   });
+  const httpAdapter=app.get(HttpAdapterHost)
   app.setGlobalPrefix('api/v1')
-  app.useGlobalFilters(new HttpExceptionFilter(logger))
+  app.useGlobalFilters(new HttpExceptionFilter(logger,httpAdapter))
   const port = 3000
   await app.listen(port);
 

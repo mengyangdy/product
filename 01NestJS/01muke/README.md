@@ -141,3 +141,59 @@ nest由一个总的trycatch来记录
 @Query() 括号里面传参数就是解析这一个参数 如果什么都不传的话 就是获取到所有的query参数了
 
 @Get('/:id') 和@Get('/profile')  这两个路由冲突了 如果profile在后面的话 会被上面的:id路由所拦截  要不就把profile路由放到id的上面  要不就把id的改为@Get('/info/:id')
+
+前端Query传递过来的参数都是string类型的
+
+![](./images/Snipaste_2024-09-09_21-15-15.png)
+
+
+nest g f filters/typeorm --flat -d
+
+![](./images/Snipaste_2024-09-09_21-52-59.png)
+
+
+![](./images/Snipaste_2024-09-09_22-24-36.png)
+
+![](./images/Snipaste_2024-09-09_22-28-10.png)
+
+![](./images/Snipaste_2024-09-09_22-28-39.png)
+
+![](./images/Snipaste_2024-09-09_22-29-29.png)
+
+
+## JWT
+JWT的全称是JSON Web Token,一个JWT由三部分构成，Header Payload SIgnature
+
+Header 规定了加密的方式和加密的类型
+
+![](./images/Snipaste_2024-09-09_22-52-45.png)
+
+包含的一些用户的信息
+![](./images/Snipaste_2024-09-09_22-53-38.png)
+
+Signature就是Header的base64的值+payload的base64的值 再加上SIgnature的一个字符串
+
+![](./images/Snipaste_2024-09-09_22-54-18.png)
+
+### JWT特点
+防止CSRF（主要是伪造请求，带上Cookie）
+适合移动应用 因为移动应用没有Cookie  Cookie是在浏览器上存储的
+无状态 编码数据
+
+![](./images/Snipaste_2024-09-09_22-59-35.png)
+
+没有绝对的安全 只有相对的安全
+
+## 算法加密
+![](./images/Snipaste_2024-09-09_23-01-40.png)
+
+数据加密的基本过程，就是对原来为明文的文件或数据桉某种算法进行处理，使其称为不可读的一段代码，通常称为密文，通过这样的途径，来达到保护数据不被非法人窃听阅读的目的。
+
+![](./images/Snipaste_2024-09-09_23-04-22.png)
+
+
+![](./images/Snipaste_2024-09-09_23-06-40.png)
+
+![](./images/Snipaste_2024-09-09_23-07-53.png)
+
+![](./images/Snipaste_2024-09-09_23-53-53.png)

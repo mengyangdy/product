@@ -1,12 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, LoggerService, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, LoggerService, HttpException, HttpStatus, UseFilters } from '@nestjs/common';
 // import {Logger} from '@nestjs/common'
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { TypeormFilter } from 'src/filters/typeorm.filter';
 // import { Logger } from 'nestjs-pino';
 
 @Controller('user')
+@UseFilters(new TypeormFilter)
 export class UserController {
   // private logger=new Logger(UserController.name)
   // private logger:Logger

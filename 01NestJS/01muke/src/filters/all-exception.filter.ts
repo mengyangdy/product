@@ -1,6 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, LoggerService, } from "@nestjs/common";
 import { HttpAdapterHost } from "@nestjs/core";
 import * as requestIp from 'request-ip';
+import { QueryFailedError } from "typeorm";
 
 @Catch()
 export class AllExceptionfilter implements ExceptionFilter {
@@ -17,6 +18,15 @@ export class AllExceptionfilter implements ExceptionFilter {
 
     const httpStatus = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR
 
+    let msg:string=exception['response'] || 'Internal Server Error'
+    // 加入更多的异常错误逻辑
+    if(exception instanceof QueryFailedError){
+      msg=exception.message
+      if(exception.driverError.errno === 1062){
+        msg='唯一索引冲突'
+      }
+    }
+
     const responseBody = {
       headers: request.headers,
       query: request.query,
@@ -27,7 +37,7 @@ export class AllExceptionfilter implements ExceptionFilter {
       // IP信息
       ip: requestIp.getClientIp(request),
       exceptioin: exception['name'],
-      error: exception['response'] || 'Internal Server Error',
+      error: msg
     }
 
     this.logger.error('[toimc]',responseBody)
