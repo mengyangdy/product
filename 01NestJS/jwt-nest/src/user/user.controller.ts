@@ -1,14 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreatePipePipe } from './pipes/create-pipe.pipe';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  // 当参数超过三个的时候使用这个来进行对数据的转换
+  create(@Body(CreatePipePipe) createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
@@ -18,7 +20,9 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  // 一个变量进行转换就这样写 就行了 不超过三个也是建议这样写 
+
+  findOne(@Param('id',ParseIntPipe) id: string) {
     return this.userService.findOne(+id);
   }
 
