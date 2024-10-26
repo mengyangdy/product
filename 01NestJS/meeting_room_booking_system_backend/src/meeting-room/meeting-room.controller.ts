@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
   DefaultValuePipe,
-  Query,
+  Query, Put
 } from "@nestjs/common";
 import { MeetingRoomService } from "./meeting-room.service";
 import { CreateMeetingRoomDto } from "./dto/create-meeting-room.dto";
@@ -28,11 +28,29 @@ export class MeetingRoomController {
       generateParseIntPipe("pageSize"),
     )
     pageSize: number,
+    @Query('name') name: string,
+    @Query('capacity') capacity: number,
+    @Query('equipment') equipment: string
   ) {
-    return this.meetingRoomService.find(pageNo, pageSize);
+    return this.meetingRoomService.find(pageNo, pageSize, name, capacity, equipment);
   }
   @Post('create')
   async create(@Body() meetingRoomDto: CreateMeetingRoomDto){
     return this.meetingRoomService.create(meetingRoomDto)
+  }
+
+  @Put('update')
+  async update(@Body() meetingRoomDto:UpdateMeetingRoomDto){
+    return await this.meetingRoomService.update(meetingRoomDto)
+  }
+
+  @Get(':id')
+  async find(@Param('id') id:number ){
+    return await this.meetingRoomService.findById(id)
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id:number){
+    return await this.meetingRoomService.delete(id)
   }
 }

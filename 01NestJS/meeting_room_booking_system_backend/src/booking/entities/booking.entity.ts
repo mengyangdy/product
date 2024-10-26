@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "../../user/entities/user.entity";
 import { MeetingRoom } from "../../meeting-room/entities/meeting-room.entity";
 
@@ -16,10 +16,25 @@ export class Booking {
   endTime:Date
   @Column({
     length:20,
-    comment:'状态（申请中，审批通过，审批驳回），已拒绝'
+    comment:'状态（申请中，审批通过，审批驳回，已解除）'
   })
   status:string
+  @Column({
+    length:100,
+    comment:'备注',
+    default:''
+  })
   note:string
+  @ManyToOne(()=>User)
   user:User
+  @ManyToOne(()=>MeetingRoom)
   room:MeetingRoom
+  @CreateDateColumn({
+    comment:'创建时间'
+  })
+  createTime:Date
+  @CreateDateColumn({
+    comment:'更新时间'
+  })
+  updateTime:Date
 }
