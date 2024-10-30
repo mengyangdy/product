@@ -17,6 +17,8 @@ import { MeetingRoomModule } from './meeting-room/meeting-room.module';
 import { MeetingRoom } from "./meeting-room/entities/meeting-room.entity";
 import { BookingModule } from './booking/booking.module';
 import { Booking } from "./booking/entities/booking.entity";
+import {WinstonModule,WinstonLogger,utilities} from "nest-winston";
+import * as winston from 'winston'
 
 @Module({
   imports: [
@@ -52,6 +54,19 @@ import { Booking } from "./booking/entities/booking.entity";
           connectorPackage: "mysql2",
         };
       },
+    }),
+    WinstonModule.forRootAsync({
+      useFactory:()=>({
+        level:'debug',
+        transports:[
+          new winston.transports.File({
+            filename:`${process.cwd()}/log`
+          }),
+          new winston.transports.Console({
+            format:winston.format.combine(winston.format.timestamp(),utilities.format.nestLike())
+          })
+        ]
+      })
     }),
     UserModule,
     RedisModule,
