@@ -1,0 +1,1 @@
+export const IS_SUB_DOMAIN=['GITEE_PAGES', 'GP_PAGES'].includes(import.meta.env.VITE_ENV)
