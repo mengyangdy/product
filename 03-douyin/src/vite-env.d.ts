@@ -5,3 +5,12 @@ declare module "*.vue" {
   const vueComponent: DefineComponent<{}, {}, any>
   export default vueComponent
 }
+
+declare global{
+  interface Window{
+    isMoved:boolean
+    isMuted:boolean
+  }
+}
+
+export {}

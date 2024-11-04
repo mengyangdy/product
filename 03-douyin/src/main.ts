@@ -4,6 +4,9 @@ import "@/style/index.less"
 import router from './router'
 import { createPinia } from 'pinia'
 
+window.isMoved = false
+window.isMuted = true
+
 const pinia=createPinia()
 const app=createApp(App)
 
