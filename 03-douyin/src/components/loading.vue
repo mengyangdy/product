@@ -1,22 +1,26 @@
+<script setup lang="ts">
+import { Prop } from 'vue'
+
+interface Props {
+  isFullScreen: boolean
+  type: string
+}
+
+withDefaults(defineProps<Props>(), {
+  isFullScreen: true,
+  type: 'normal'
+})
+</script>
+
 <template>
-  <div class="loading" :class="[isFullScreen?'full':'inline',type]">
+  <div
+    class="loading"
+    :class="[isFullScreen ? 'full' : 'inline', type]"
+  >
     <div class="circle blue"></div>
     <div class="circle red"></div>
   </div>
 </template>
-
-<script setup lang="ts">
-defineProps({
-  isFullScreen: {
-    type: Boolean,
-    default: true
-  },
-  type: {
-    type: String,
-    default: 'normal'
-  }
-})
-</script>
 
 <style scoped lang="less">
 .loading {
@@ -70,12 +74,12 @@ defineProps({
       transform: translate3d(10rem, 0, 0) scale(1.2);
     }
   }
-  @keyframes anim-red{
-    from{
-      transform: translate3d(0,0,0) scale(1);
+  @keyframes anim-red {
+    from {
+      transform: translate3d(0, 0, 0) scale(1);
     }
-    to{
-      transform: translate3d(-10rem,0,0) scale(1.2);
+    to {
+      transform: translate3d(-10rem, 0, 0) scale(1.2);
     }
   }
 }

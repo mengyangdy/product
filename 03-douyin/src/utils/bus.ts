@@ -1,45 +1,45 @@
 export default {
   eventMap: new Map(),
   on(eventType, cb) {
-    let cbs = this.eventMap.get(eventType);
+    let cbs = this.eventMap.get(eventType)
     if (cbs) {
-      cbs.push(cb);
+      cbs.push(cb)
     } else {
-      cbs = [cb];
+      cbs = [cb]
     }
     if (cbs.length > 10) {
-      console.warn(`${eventType} 事件绑定了太多回调函数`);
+      console.warn(`${eventType} 事件绑定了太多回调函数`)
     }
-    this.eventMap.set(eventType,cbs)
+    this.eventMap.set(eventType, cbs)
   },
-  once(eventType,cb){
-    this.eventMap.set(eventType,[cb])
+  once(eventType, cb) {
+    this.eventMap.set(eventType, [cb])
   },
-  off(eventType,fn){
-    const cbs=this.eventMap.has(eventType)
-    if(cbs){
-      if(fn){
-        const cbs=this.eventMap.get(eventType)
-        const rIndex=cbs.findIndex(v=>v===fn)
-        if(rIndex >-1){
-          cbs.splice(rIndex,1)
+  off(eventType, fn) {
+    const cbs = this.eventMap.has(eventType)
+    if (cbs) {
+      if (fn) {
+        const cbs = this.eventMap.get(eventType)
+        const rIndex = cbs.findIndex(v => v === fn)
+        if (rIndex > -1) {
+          cbs.splice(rIndex, 1)
         }
-        this.eventMap.set(eventType,cbs)
-      }else{
+        this.eventMap.set(eventType, cbs)
+      } else {
         this.eventMap.delete(eventType)
       }
     }
   },
-  offAll(){
-    this.eventMap=new Map()
+  offAll() {
+    this.eventMap = new Map()
   },
-  emit(eventType,val?){
-    const cbs=this.eventMap.get(eventType)
-    if(cbs){
-      cbs.map(cb=>cb(val))
+  emit(eventType, val?) {
+    const cbs = this.eventMap.get(eventType)
+    if (cbs) {
+      cbs.map(cb => cb(val))
     }
   }
-};
+}
 
 export const EVENT_KEY = {
   SINGLE_CLICK: 'SINGLE_CLICK',

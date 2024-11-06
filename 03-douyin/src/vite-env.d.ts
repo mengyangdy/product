@@ -1,15 +1,15 @@
 /// <reference types="vite/client" />
 
-declare module "*.vue" {
-  import type { DefineComponent } from "vue"
+declare module '*.vue' {
+  import type { DefineComponent } from 'vue'
   const vueComponent: DefineComponent<{}, {}, any>
   export default vueComponent
 }
 
-declare global{
-  interface Window{
-    isMoved:boolean
-    isMuted:boolean
+declare global {
+  interface Window {
+    isMoved: boolean
+    isMuted: boolean
   }
 }
 

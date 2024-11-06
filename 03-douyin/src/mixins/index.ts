@@ -1,7 +1,7 @@
 import { Icon } from '@iconify/vue'
 
 export default {
-  components:{
+  components: {
     Icon
   }
 }
