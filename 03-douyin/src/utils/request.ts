@@ -56,7 +56,6 @@ axiosInstance.interceptors.response.use(
         data.code = resCode = 500
         data.success = false
         throw new Error(error)
-
       }
       if (resCode === 0) {
         data.code = resCode = 200
@@ -74,7 +73,6 @@ axiosInstance.interceptors.response.use(
     return data
   },
   (error: AxiosError) => {
-    console.log('error', error)
     // console.log(error.response)
     // console.log(error.response.status)
     if (error.response === undefined) {

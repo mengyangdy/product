@@ -1,3 +1,20 @@
+<template>
+  <SlideVerticalInfinite
+    :id="props.uniqueId"
+    ref="listRef"
+    v-model:index="state.index"
+    v-love="props.uniqueId"
+    :unique-id="props.uniqueId"
+    name="infinite"
+    :active="props.active"
+    :loadding="baseStore.loading"
+    :render="render"
+    :list="state.list"
+    @load-more="loadMore"
+    @refresh="() => getData(true)"
+  />
+</template>
+
 <script setup lang="tsx">
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 
@@ -43,14 +60,13 @@ const props = defineProps({
 const baseStore = useMainStore()
 
 const p = {
-  onShowComments() {
-  }
+  onShowComments() {}
 }
 
 const render = slideItemRender({ ...props.cbs, ...p })
 
-function slideItemRender(props: any) {
-  return function render(item, index, play, uniqueId) {
+function slideItemRender(params: any) {
+  return (item, index, play, uniqueId) => {
     let node
     switch (item.type) {
       case 'img':
@@ -63,7 +79,7 @@ function slideItemRender(props: any) {
         )
         break
       case 'user':
-        node = <SlideUser {...props} />
+        node = <SlideUser {...params} />
         break
       case 'send-video':
         node = (
@@ -80,7 +96,7 @@ function slideItemRender(props: any) {
             item={item}
             index={index}
             position={{ uniqueId, index }}
-            {...props}
+            {...params}
           />
         )
         break
@@ -120,7 +136,6 @@ async function getData(refresh = false) {
     start: refresh ? 0 : state.list.length,
     pageSize: state.pageSize
   })
-  // console.log('getSlide4Data-', refresh, res, state.totalSize, state.list.length)
   baseStore.loading = false
   if (res.success) {
     state.totalSize = res.data.total
@@ -157,22 +172,5 @@ onUnmounted(() => {
   bus.off(EVENT_KEY.TOGGLE_CURRENT_VIDEO, togglePlay)
 })
 </script>
-
-<template>
-  <SlideVerticalInfinite
-    :id="props.uniqueId"
-    ref="listRef"
-    v-model:aria-colindex="state.index"
-    v-love="props.uniqueId"
-    :unique-id="props.uniqueId"
-    name="infinite"
-    :active="props.active"
-    :loadding="baseStore.loading"
-    :render="render"
-    :list="state.list"
-    @load-more="loadMore"
-    @refresh="() => getData(true)"
-  />
-</template>
 
 <style scoped lang="less"></style>

@@ -1,5 +1,3 @@
-<script setup lang="ts"></script>
-
 <template>
   <RouterView v-slot="{ Component }">
     <Transition>
@@ -9,6 +7,8 @@
     </Transition>
   </RouterView>
 </template>
+
+<script setup lang="ts"></script>
 
 <style lang="less">
 * {

@@ -1,11 +1,27 @@
+<template>
+  <div class="slide slide-infinite">
+    <Loading v-if="props.loading && props.list.length === 0" />
+    <div
+      ref="slideListEl"
+      class="slide-list flex-direction-column"
+      @pointerdown.prevent="touchStart"
+      @pointermove.prevent="touchMove"
+      @pointerup.prevent="touchEnd"
+    >
+      <slot></slot>
+    </div>
+  </div>
+</template>
+
 <script setup lang="tsx">
-import { onMounted, reactive, ref, watch } from 'vue'
+import { createApp, onMounted, reactive, ref, watch } from 'vue'
 
 import Loading from '@/components/loading.vue'
+import SlideItem from '@/components/slide/slide-item.vue'
 import { SlideType } from '@/utils/const_var.ts'
 import { useMainStore } from '@/store'
 import bus, { EVENT_KEY } from '@/utils/bus.ts'
-import { getSlideOffset, slideInit } from '@/utils/slide'
+import { getSlideOffset, slideInit, slideTouchEnd } from '@/utils/slide'
 import { _css } from '@/utils/dom.ts'
 
 const props = defineProps({
@@ -133,7 +149,7 @@ watch(
 
 watch(
   () => state.localIndex,
-  (newV, oldV) => {
+  newV => {
     bus.emit(EVENT_KEY.CURRENT_ITEM, props.list[newV])
     bus.emit(EVENT_KEY.SINGLE_CLICK_BROADCAST, {
       uniqueId: props.uniqueId,
@@ -149,12 +165,10 @@ watch(
     }, 200)
   }
 )
-
 watch(
   () => props.active,
   newV => {
     // 当激活此页时，如果list为空，那么向上发射事件通知父组件请求数据
-
     if (newV && !props.list.length) return emit('refresh')
     const t = newV ? 0 : 200
     if (newV) {
@@ -164,9 +178,12 @@ watch(
       bus.emit(EVENT_KEY.SINGLE_CLICK_BROADCAST, {
         uniqueId: props.uniqueId,
         index: state.localIndex,
-        type: newVal === false ? EVENT_KEY.ITEM_STOP : EVENT_KEY.ITEM_PLAY
+        type: !newV ? EVENT_KEY.ITEM_STOP : EVENT_KEY.ITEM_PLAY
       })
     }, t)
+  },
+  {
+    immediate: true
   }
 )
 
@@ -177,24 +194,24 @@ onMounted(() => {
 function insertContent() {
   if (!props.list.length) return
   slideListEl.value.innerHTML = ''
-  const half = Number.parseInt((props.virtualTotal / 2).toString())
+  const half = Number.parseInt((props.virtualTotal / 2).toString(), 10)
   // 虚拟列表的一半
   // 因为我们只渲染 props.virtualTotal 条数据到dom中，并且当前index有可能不是0，所以需要计算出起始下标和结束下标
   let start = 0
+
   if (state.localIndex > half) {
     start = state.localIndex - half
   }
   let end = start + props.virtualTotal
   if (end >= props.list.length) {
     end = props.list.length
-    start = ed - props.virtualTotal
+    start = end - props.virtualTotal
   }
   if (start < 0) {
     start = 0
   }
-
   props.list.slice(start, end).map((item, index) => {
-    const el = getInsEl(itm, start + index, start + index === state.localIndex)
+    const el = getInsEl(item, start + index, start + index === state.localIndex)
     slideListEl.value.appendChild(el)
   })
 
@@ -216,7 +233,6 @@ function insertContent() {
     })
   }
   state.wrapper.childrenLength = slideListEl.value.children.length
-  // console.log('list[state.localIndex]',list[state.localIndex])
   bus.emit(EVENT_KEY.CURRENT_ITEM, props.list[state.localIndex])
 }
 
@@ -228,10 +244,9 @@ function insertContent() {
  * @param play
  */
 function getInsEl(item, index, play = false) {
-  // console.log('index', cloneDeep(item), index, play)
   const slideVNode = props.render(item, index, play, props.uniqueId)
+  console.log('=>(slide-vertical-infinite.vue:249) slideVNode', slideVNode)
   const parent = document.createElement('div')
-  // TODO 打包到线上时用这个，这个在开发时任何修改都会刷新页面
   if (import.meta.env.PROD) {
     parent.classList.add('slide-item')
     parent.setAttribute('data-index', index)
@@ -246,14 +261,18 @@ function getInsEl(item, index, play = false) {
     return parent
   }
   // 创建一个新的Vue实例，并挂载到一个div上
-  const app = createApp({
-    render() {
-      return <SlideItem data-index={index}>{slideVNode}</SlideItem>
-    }
-  })
-  const ins = app.mount(parent)
-  appInsMap.set(index, app)
-  return ins.$el
+  try {
+    const app = createApp({
+      render() {
+        return <SlideItem data-index={index}>{slideVNode}</SlideItem>
+      }
+    })
+    const ins = app.mount(parent)
+    appInsMap.set(index, app)
+    return ins.$el
+  } catch (e) {
+    console.log('=>(slide-vertical-infinite.vue:279) e', e)
+  }
 }
 
 function touchStart(e) {
@@ -371,24 +390,5 @@ function dislike() {
 
 defineExpose({ dislike })
 </script>
-
-<template>
-  <div class="slide slide-infinite">
-    <Loading
-      v-if="props.loading"
-      &&
-      props.list.length
-    />
-    <div
-      ref="slideListEl"
-      class="slide-list flex-direction-column"
-      @pointerdown.prevent="touchStart"
-      @pointermove.prevent="touchMove"
-      @pointerup.prevent="touchEnd"
-    >
-      <slot></slot>
-    </div>
-  </div>
-</template>
 
 <style scoped lang="less"></style>

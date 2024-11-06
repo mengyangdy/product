@@ -1,3 +1,29 @@
+<template>
+  <div class="slide horizontal">
+    <div
+      v-if="indicator && state.wrapper.childrenLength"
+      class="indicator-bullets"
+    >
+      <div
+        v-for="(item, i) in state.wrapper.childrenLength"
+        :key="i"
+        class="bullet"
+        :class="{ active: state.localIndex === item - 1 }"
+      ></div>
+    </div>
+
+    <div
+      ref="slideListEl"
+      class="slide-list"
+      @pointerdown.prevent="touchStart"
+      @pointermove.prevent="touchMove"
+      @pointerup.prevent="touchEnd"
+    >
+      <slot></slot>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 
@@ -114,32 +140,6 @@ function touchEnd(e) {
   slideReset(e, slideListEl.value, state, emit)
 }
 </script>
-
-<template>
-  <div class="slide horizontal">
-    <div
-      v-if="indicator && state.wrapper.childrenLength"
-      class="indicator-bullets"
-    >
-      <div
-        v-for="(item, i) in state.wrapper.childrenLength"
-        :key="i"
-        class="bullet"
-        :class="{ active: state.localIndex === item - 1 }"
-      ></div>
-    </div>
-
-    <div
-      ref="slideListEl"
-      class="slide-list"
-      @pointerdown.prevent="touchStart"
-      @pointermove.prevent="touchMove"
-      @pointerup.prevent="touchEnd"
-    >
-      <slot></slot>
-    </div>
-  </div>
-</template>
 
 <style scoped lang="less">
 .indicator-bullets {

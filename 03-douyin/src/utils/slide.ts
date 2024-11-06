@@ -36,6 +36,7 @@ function checkEvent(e: any) {
   }
   return true
 }
+
 // 初始化信息，获取slide dom的长宽、子元素数量，用于move事件判断能否滑动
 export function slideInit(el: any, state: any) {
   state.wrapper.width = _css(el, 'width')
@@ -165,7 +166,6 @@ export function slideTouchEnd(
   nextCb: any = null,
   notNextCb: any = null
 ) {
-  console.log('🚀 ~ file: slide.ts:162 ~ state~', state)
   if (!checkEvent(e)) {
     return
   }

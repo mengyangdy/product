@@ -1,3 +1,92 @@
+<template>
+  <div
+    class="indicator-home"
+    :class="{ isLight }"
+  >
+    <div
+      class="notice"
+      :style="noticeStyle"
+    >
+      <span>下拉刷新内容</span>
+    </div>
+    <div
+      ref="toolbar"
+      class="toolbar"
+      :style="toolbarStyle"
+    >
+      <Icon
+        icon="tabler:menu-deep"
+        class="search"
+        style="transform: rotateY(180deg)"
+        @click="emit('showSlidebar')"
+      />
+      <div class="tab-ctn">
+        <div
+          ref="tabs"
+          class="tabs"
+        >
+          <div
+            class="tab"
+            :class="{ active: index === 0 }"
+            @click.stop="change(0)"
+          >
+            <span>热点</span>
+          </div>
+          <div
+            class="tab"
+            :class="{ active: index === 1 }"
+            @click.stop="change(1)"
+          >
+            <span>长视频</span>
+          </div>
+          <div
+            class="tab"
+            :class="{ active: index === 2 }"
+            @click.stop="change(2)"
+          >
+            <span>关注</span>
+            <img
+              src="../../../assets/img/icon/live.webp"
+              alt=""
+              class="tab2-img"
+            />
+          </div>
+          <div
+            class="tab"
+            :class="{ active: index === 3 }"
+            @click.stop="change(3)"
+          >
+            <span>经验</span>
+          </div>
+          <div
+            class="tab"
+            :class="{ active: index === 4 }"
+            @click.stop="change(4)"
+          >
+            <span>推荐</span>
+          </div>
+        </div>
+        <div
+          ref="indicatorRef"
+          class="indicator"
+        ></div>
+      </div>
+      <Icon
+        v-hide="loading"
+        icon="ion:search"
+        class="search"
+        @click="$router.push('/home/search')"
+      />
+    </div>
+    <Loading
+      :syle="loadingStyle"
+      class="loading"
+      style="width: 40rem"
+      :is-full-screen="false"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import { computed, onMounted, ref } from 'vue'
@@ -122,95 +211,6 @@ function change(index: number) {
   _css(indicatorRef.value, 'left', `${lefts.value[index]}px`)
 }
 </script>
-
-<template>
-  <div
-    class="indicator-home"
-    :class="{ isLight }"
-  >
-    <div
-      class="notice"
-      :style="noticeStyle"
-    >
-      <span>下拉刷新内容</span>
-    </div>
-    <div
-      ref="toolbar"
-      class="toolbar"
-      :style="toolbarStyle"
-    >
-      <Icon
-        icon="tabler:menu-deep"
-        class="search"
-        style="transform: rotateY(180deg)"
-        @click="emit('showSlidebar')"
-      />
-      <div class="tab-ctn">
-        <div
-          ref="tabs"
-          class="tabs"
-        >
-          <div
-            class="tab"
-            :class="{ active: index === 0 }"
-            @click.stop="change(0)"
-          >
-            <span>热点</span>
-          </div>
-          <div
-            class="tab"
-            :class="{ active: index === 1 }"
-            @click.stop="change(1)"
-          >
-            <span>长视频</span>
-          </div>
-          <div
-            class="tab"
-            :class="{ active: index === 2 }"
-            @click.stop="change(2)"
-          >
-            <span>关注</span>
-            <img
-              src="../../../assets/img/icon/live.webp"
-              alt=""
-              class="tab2-img"
-            />
-          </div>
-          <div
-            class="tab"
-            :class="{ active: index === 3 }"
-            @click.stop="change(3)"
-          >
-            <span>经验</span>
-          </div>
-          <div
-            class="tab"
-            :class="{ active: index === 4 }"
-            @click.stop="change(4)"
-          >
-            <span>推荐</span>
-          </div>
-        </div>
-        <div
-          ref="indicatorRef"
-          class="indicator"
-        ></div>
-      </div>
-      <Icon
-        v-hide="loading"
-        icon="ion:search"
-        class="search"
-        @click="$router.push('/home/search')"
-      />
-    </div>
-    <Loading
-      :syle="loadingStyle"
-      class="loading"
-      style="width: 40rem"
-      :is-full-screen="false"
-    />
-  </div>
-</template>
 
 <style scoped lang="less">
 .indicator-home {

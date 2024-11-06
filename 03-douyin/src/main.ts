@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 
+import { startMock } from '@/mock'
+
 import '@/style/index.less'
 
 import { createPinia } from 'pinia'
@@ -19,3 +21,5 @@ app.use(pinia)
 app.use(router)
 setupDirective(app)
 app.mount('#app')
+
+startMock()

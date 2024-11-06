@@ -1,57 +1,3 @@
-<script setup lang="ts">
-import { reactive, ref } from 'vue'
-
-import SlideItem from '@/components/slide/slide-item.vue'
-import SlideList from '@/views/home/slide/slide-list.vue'
-import { recommendedVideo } from '@/api/video'
-import { stopPropagation } from '@/utils'
-import bus, { EVENT_KEY } from '@/utils/bus'
-
-const props = defineProps({
-  cbs: {
-    type: Object,
-    default() {
-      return {}
-    }
-  },
-  active: {
-    type: Boolean,
-    default: false
-  }
-})
-
-function stop(e: any) {
-  e.stopPropagation()
-}
-
-const subTypeRef = ref()
-
-const state = reactive({
-  index: 0,
-  subType: -1,
-  subTypeVisible: false,
-  subTypeHeight: '0',
-  // 用于改变zindex的层级到上层，反正比slide高就行。不然摸不到subType.
-  subTypeIsTop: false
-})
-
-function showSubType(e: any) {
-  stopPropagation(e)
-  state.subTypeHeight = `${subTypeRef.value.getBoundingClientRect().height}px`
-  state.subTypeVisible = true
-  setTimeout(() => (state.subTypeIsTop = true), 300)
-  bus.emit(EVENT_KEY.OPEN_SUB_TYPE)
-}
-
-function pageClick(e: any) {
-  if (state.subTypeVisible) {
-    state.subTypeIsTop = state.subTypeVisible = false
-    bus.emit(EVENT_KEY.CLOSE_SUB_TYPE)
-    stopPropagation(e)
-  }
-}
-</script>
-
 <template>
   <SlideItem class="slide-item-class">
     <div
@@ -142,6 +88,60 @@ function pageClick(e: any) {
     />
   </SlideItem>
 </template>
+
+<script setup lang="ts">
+import { reactive, ref } from 'vue'
+
+import SlideItem from '@/components/slide/slide-item.vue'
+import SlideList from '@/views/home/slide/slide-list.vue'
+import { recommendedVideo } from '@/api/video'
+import { stopPropagation } from '@/utils'
+import bus, { EVENT_KEY } from '@/utils/bus'
+
+const props = defineProps({
+  cbs: {
+    type: Object,
+    default() {
+      return {}
+    }
+  },
+  active: {
+    type: Boolean,
+    default: false
+  }
+})
+
+function stop(e: any) {
+  e.stopPropagation()
+}
+
+const subTypeRef = ref()
+
+const state = reactive({
+  index: 0,
+  subType: -1,
+  subTypeVisible: false,
+  subTypeHeight: '0',
+  // 用于改变zindex的层级到上层，反正比slide高就行。不然摸不到subType.
+  subTypeIsTop: false
+})
+
+function showSubType(e: any) {
+  stopPropagation(e)
+  state.subTypeHeight = `${subTypeRef.value.getBoundingClientRect().height}px`
+  state.subTypeVisible = true
+  setTimeout(() => (state.subTypeIsTop = true), 300)
+  bus.emit(EVENT_KEY.OPEN_SUB_TYPE)
+}
+
+function pageClick(e: any) {
+  if (state.subTypeVisible) {
+    state.subTypeIsTop = state.subTypeVisible = false
+    bus.emit(EVENT_KEY.CLOSE_SUB_TYPE)
+    stopPropagation(e)
+  }
+}
+</script>
 
 <style scoped lang="less">
 .slide-item-class {

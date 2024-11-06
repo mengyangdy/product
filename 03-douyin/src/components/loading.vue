@@ -1,3 +1,13 @@
+<template>
+  <div
+    class="loading"
+    :class="[isFullScreen ? 'full' : 'inline', type]"
+  >
+    <div class="circle blue"></div>
+    <div class="circle red"></div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Prop } from 'vue'
 
@@ -11,16 +21,6 @@ withDefaults(defineProps<Props>(), {
   type: 'normal'
 })
 </script>
-
-<template>
-  <div
-    class="loading"
-    :class="[isFullScreen ? 'full' : 'inline', type]"
-  >
-    <div class="circle blue"></div>
-    <div class="circle red"></div>
-  </div>
-</template>
 
 <style scoped lang="less">
 .loading {
