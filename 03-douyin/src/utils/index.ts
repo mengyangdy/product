@@ -6,7 +6,7 @@ export function stopPropagation(e: Event) {
   e.preventDefault()
 }
 
-export function _notice(val: string) {
+export function notice(val: string) {
   const div = document.createElement('div')
   div.classList.add('global-notice')
   div.textContent = val
@@ -16,8 +16,8 @@ export function _notice(val: string) {
   }, 1000)
 }
 
-export function _no() {
-  _notice('未实现')
+export function no() {
+  notice('未实现')
 }
 
 /**
@@ -26,7 +26,7 @@ export function _no() {
  * @param min
  * @param max
  */
-export function random(min, max) {
+export function random(min:number, max:number) {
   const minCeiled = Math.ceil(min)
   const maxFloored = Math.floor(max)
   return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled)
@@ -53,7 +53,7 @@ export function duration(v) {
   let str: string = ''
   if (m === 0) {
     str = '00'
-  } else if (mm > 0 && m < 10) {
+  } else if (m > 0 && m < 10) {
     str = `0${m}`
   } else {
     str = `${m}`
@@ -71,4 +71,15 @@ export function duration(v) {
 
 export function getUserDouyinId(item) {
   return item.author.unique_id || item.author.short_id
+}
+
+export function formatNumber(num: number) {
+  if(!num) return
+  if (num > 100000000) {
+    return (num / 100000000).toFixed(1) + '亿'
+  } else if (num > 10000) {
+    return (num / 10000).toFixed(1) + '万'
+  } else {
+    return num
+  }Ï
 }

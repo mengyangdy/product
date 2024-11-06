@@ -66,7 +66,7 @@ const p = {
 const render = slideItemRender({ ...props.cbs, ...p })
 
 function slideItemRender(params: any) {
-  return (item, index, play, uniqueId) => {
+  return (item: any, index: any, play: boolean, uniqueId: string) => {
     let node
     switch (item.type) {
       case 'img':

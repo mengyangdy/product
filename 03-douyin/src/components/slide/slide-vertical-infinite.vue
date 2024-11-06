@@ -21,7 +21,7 @@ import SlideItem from '@/components/slide/slide-item.vue'
 import { SlideType } from '@/utils/const_var.ts'
 import { useMainStore } from '@/store'
 import bus, { EVENT_KEY } from '@/utils/bus.ts'
-import { getSlideOffset, slideInit, slideTouchEnd } from '@/utils/slide'
+import { getSlideOffset, slideInit, slideTouchEnd, slideTouchMove, slideTouchStart } from '@/utils/slide'
 import { _css } from '@/utils/dom.ts'
 
 const props = defineProps({
@@ -100,7 +100,6 @@ watch(
       // let lastSlideItem = slideListEl.value.querySelector(`.${itemClassName}:last-child`)
       // let top = _css(lastSlideItem, 'top')
       // let newListStartIndex = Number(lastSlideItem.getAttribute('data-index')) + 1
-      // // console.log('newListStartIndex', newListStartIndex)
       // newVal.slice(newListStartIndex, newListStartIndex + 3).map((item, index) => {
       //   let el = getInsEl(item, newListStartIndex + index)
       //   //这里必须要设置个top值，不然会把前面的条目给覆盖掉
@@ -245,7 +244,6 @@ function insertContent() {
  */
 function getInsEl(item, index, play = false) {
   const slideVNode = props.render(item, index, play, props.uniqueId)
-  console.log('=>(slide-vertical-infinite.vue:249) slideVNode', slideVNode)
   const parent = document.createElement('div')
   if (import.meta.env.PROD) {
     parent.classList.add('slide-item')
@@ -271,7 +269,7 @@ function getInsEl(item, index, play = false) {
     appInsMap.set(index, app)
     return ins.$el
   } catch (e) {
-    console.log('=>(slide-vertical-infinite.vue:279) e', e)
+  console.log("🚀 ~ getInsEl ~ e:", e)
   }
 }
 
@@ -305,7 +303,6 @@ function touchEnd(e) {
           emit('loadMore')
         }
 
-        // console.log('props.list.length', props.list.length, state.localIndex)
         if (
           state.localIndex > half &&
           state.localIndex < props.list.length - half

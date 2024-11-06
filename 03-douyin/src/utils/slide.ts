@@ -77,7 +77,6 @@ export function canSlide(state: any) {
         (Math.abs(state.move.x) * 10) / (Math.abs(state.move.y) * 10)
       // 根据当前slide的类型，判断能否滑动，并记录下来，后续不再判断，直接返回记录值
       state.next = state.type === SlideType.HORIZONTAL ? angle > 1 : angle <= 1
-      // console.log('angle', angle, state.next)
       state.needCheck = false
     } else {
       return false

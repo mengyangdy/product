@@ -41,9 +41,9 @@ import {
 interface Props {
   index: number
   name: string
-  autoplay: boolean
-  indicator: boolean
-  changeActiveIndexUseAnim: boolean
+  autoplay?: boolean
+  indicator?: boolean
+  changeActiveIndexUseAnim?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   index: 0,

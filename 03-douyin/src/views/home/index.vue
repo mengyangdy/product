@@ -29,7 +29,7 @@
           <div class="content">
             <div
               class="item"
-              @click="_no"
+              @click="no"
             >
               <img
                 class="xcx"
@@ -40,7 +40,7 @@
             </div>
             <div
               class="item"
-              @click="_no"
+              @click="no"
             >
               <img
                 class="xcx"
@@ -64,7 +64,7 @@
               v-for="item in 6"
               :key="item"
               class="item avatar"
-              @click="_no"
+              @click="no"
             >
               <img
                 src="https://img.tol.vip/avatar/WEIXIN/3aSuTGYTzjHvcHy0y0tH1eiShKRk9Sgd.jpg?_upt=de4a5c251709635127"
@@ -81,56 +81,56 @@
           <div class="content">
             <div
               class="item"
-              @click="_no"
+              @click="no"
             >
               <Icon icon="ion:wallet-outline" />
               <span>我的钱包</span>
             </div>
             <div
               class="item"
-              @click="_no"
+              @click="no"
             >
               <Icon icon="mingcute:coupon-line" />
               <span>券包</span>
             </div>
             <div
               class="item"
-              @click="_no"
+              @click="no"
             >
               <Icon icon="icon-park-outline:bytedance-applets" />
               <span>小程序</span>
             </div>
             <div
               class="item"
-              @click="_no"
+              @click="no"
             >
               <Icon icon="solar:history-linear" />
               <span>观看历史</span>
             </div>
             <div
               class="item"
-              @click="_no"
+              @click="no"
             >
               <Icon icon="fluent:content-settings-24-regular" />
               <span>内容偏好</span>
             </div>
             <div
               class="item"
-              @click="_no"
+              @click="no"
             >
               <Icon icon="iconoir:cloud-download" />
               <span>离线模式</span>
             </div>
             <div
               class="item"
-              @click="_no"
+              @click="no"
             >
               <Icon icon="ep:setting" />
               <span>设置</span>
             </div>
             <div
               class="item"
-              @click="_no"
+              @click="no"
             >
               <Icon icon="icon-park-outline:baggage-delay" />
               <span>稍后再看</span>
@@ -172,6 +172,13 @@
             :active="state.navIndex === 4 && state.baseIndex === 1"
           />
         </SlideHorizontal>
+        <BaseFooter :init-tab="1" />
+        <BaseMask
+          v-if="state.baseIndex === 0"
+          mode="white"
+          style="position: absolute"
+          @click="state.baseIndex = 1"
+        />
       </SlideItem>
     </SlideHorizontal>
     <!--<BaseMask-->
@@ -205,7 +212,7 @@
 </template>
 
 <script setup lang="tsx">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive } from 'vue'
 import { Icon } from '@iconify/vue'
 
 import { useNav } from '@/components/slide/useNav'
@@ -213,14 +220,15 @@ import { useMainStore } from '@/store'
 import { DefaultUser } from '@/utils/const_var.ts'
 import SlideItem from '@/components/slide/slide-item.vue'
 import SlideHorizontal from '@/components/slide/slide-horizontal.vue'
-// import BaseMask from '@/components/base-mask.vue'
-import { _no } from '@/utils'
+import BaseMask from '@/components/base-mask.vue'
+import { no } from '@/utils'
 import bus, { EVENT_KEY } from '@/utils/bus'
 import FirstSlideItem from '@/views/home/slide/first-slide-item.vue'
 import TwoSlideItem from '@/views/home/slide/two-slide-item.vue'
 import FourSlideItem from '@/views/home/slide/four-slide-item.vue'
 import LongVideo from '@/views/home/slide/long-video.vue'
 import Community from '@/views/home/slide/community.vue'
+import BaseFooter from '@/components/base-footer.vue'
 
 import IndicatorHome from './components/indicator-home.vue'
 

@@ -4,6 +4,10 @@
     class="video-wrapper"
     :class="positionName"
   >
+    <Loading
+      v-if="state.loading"
+      style="position: absolute"
+    />
     <video
       ref="videoEl"
       :poster="poster"
@@ -14,18 +18,16 @@
       :x5-video-player-fullscreen="false"
       :webkit-playsinline="true"
       :x5-playsinline="true"
+      :playsinline="true"
       :fullscreen="false"
       :autoplay="isPlay"
     >
-      <template v-if="item.video.ply_addr">
-        <source
-          v-for="(urlItem, index) in item.video.ply_addr.url_list"
-          :key="index"
-          :src="urlItem"
-          type="video/mp4"
-        />
-      </template>
-
+      <source
+        v-for="(urlItem, index) in item.video.play_addr.url_list"
+        :key="index"
+        :src="urlItem"
+        type="video/mp4"
+      />
       <p>您的浏览器不支持 video 标签。</p>
     </video>
     <Icon
@@ -129,35 +131,57 @@
 import { computed, onMounted, onUnmounted, provide, reactive, ref } from 'vue'
 import { Icon } from '@iconify/vue'
 
-import { SlideItemPlayStatus } from '@/utils/const_var.ts'
-import { checkImgUrl, duration } from '@/utils'
-import bus, { EVENT_KEY } from '@/utils/bus.ts'
+import { checkImgUrl, duration, stopPropagation } from '@/utils'
+import { SlideItemPlayStatus } from '@/utils/const_var'
+import { _css } from '@/utils/dom'
+
+import Loading from '../loading.vue'
+
+import ItemToolbar from './item-tool-bar.vue'
+import bus, { EVENT_KEY } from '../../utils/bus'
+
+import ItemDesc from './item-desc.vue'
 
 defineOptions({
   name: 'BaseVideo'
 })
-// 为 props 提供默认值
-const props = withDefaults(defineProps<Props>(), {
-  item: () => ({}),
-  position: () => ({}),
-  isPlay: () => true,
-  isMy: () => false,
-  isLive: () => false
-})
-console.log(props.item)
 
-// 定义 props 的 TypeScript 接口
-interface Props {
-  item?: Record<string, any>
-  position?: Record<string, any>
-  isPlay?: boolean
-  isMy?: boolean
-  isLive?: boolean
-}
+const props = defineProps({
+  item: {
+    type: Object,
+    default: () => {
+      return {}
+    }
+  },
+  position: {
+    type: Object,
+    default: () => {
+      return {}
+    }
+  },
+  // 用于第一条数据，自动播放，如果都用事件去触发播放，有延迟
+  isPlay: {
+    type: Boolean,
+    default: () => {
+      return true
+    }
+  },
+  isMy: {
+    type: Boolean,
+    default: () => {
+      return false
+    }
+  },
+  isLive: {
+    type: Boolean,
+    default: () => {
+      return false
+    }
+  }
+})
 
 const videoEl = ref<HTMLVideoElement>()
 const progressEl = ref<HTMLDivElement>()
-
 const state = reactive({
   loading: false,
   paused: false,
@@ -172,7 +196,7 @@ const state = reactive({
   height: 0,
   width: 0,
   isMove: false,
-  ignoreWaiting: false,
+  ignoreWaiting: false, // 忽略waiting事件。因为改变进度会触发waiting事件，烦的一批
   test: [1, 2],
   localItem: props.item,
   progressBarRect: {
@@ -182,27 +206,20 @@ const state = reactive({
   videoScreenHeight: 0,
   commentVisible: false
 })
-
 const poster = computed(() => {
   return checkImgUrl(
     props.item.video.poster ?? props.item.video.cover.url_list[0]
   )
 })
-
 const durationStyle = computed(() => {
-  return {
-    width: `${state.playX}px`
-  }
+  return { width: `${state.playX}px` }
 })
-
 const isPlaying = computed(() => {
   return state.status === SlideItemPlayStatus.Play
 })
-
 const positionName = computed(() => {
   return `item-${Object.values(props.position).join('-')}`
 })
-
 const progressClass = computed(() => {
   if (state.isMove) {
     return 'move'
@@ -228,24 +245,20 @@ onMounted(() => {
   })
 
   const eventTester = (e, t: string) => {
-    videoEl.value?.addEventListener(
+    videoEl.value.addEventListener(
       e,
       () => {
-        if (e === 'playing') {
-          state.loading = false
-        }
+        if (e === 'playing') state.loading = false
         if (e === 'waiting') {
           if (!state.paused && !state.ignoreWaiting) {
             state.loading = true
           }
         }
-        // const s = false
-        // if (s) {
-        // }
       },
       false
     )
   }
+
   // eventTester("loadstart", '客户端开始请求数据'); //客户端开始请求数据
   // eventTester("abort", '客户端主动终止下载（不是因为错误引起）'); //客户端主动终止下载（不是因为错误引起）
   // eventTester("loadstart", '客户端开始请求数据'); //客户端开始请求数据
@@ -258,8 +271,8 @@ onMounted(() => {
   // eventTester("pause", 'pause()触发'); //pause()触发
   // eventTester("loadedmetadata", '成功获取资源长度'); //成功获取资源长度
   // eventTester("loadeddata"); //
-  eventTester('waiting', '等待数据，并非错误')
-  eventTester('playing', '开始播放')
+  eventTester('waiting', '等待数据，并非错误') // 等待数据，并非错误
+  eventTester('playing', '开始回放') // 开始回放
   // eventTester("canplay", '/可以播放，但中途可能因为加载而暂停'); //可以播放，但中途可能因为加载而暂停
   // eventTester("canplaythrough", '可以播放，歌曲全部加载完毕'); //可以播放，歌曲全部加载完毕
   // eventTester("seeking", '寻找中'); //寻找中
@@ -270,7 +283,6 @@ onMounted(() => {
   // eventTester("durationchange", '资源长度改变'); //资源长度改变
   // eventTester("volumechange", '音量改变'); //音量改变
 
-  // console.log('mounted')
   // bus.off('singleClickBroadcast')
   bus.on(EVENT_KEY.SINGLE_CLICK_BROADCAST, click)
   bus.on(EVENT_KEY.DIALOG_MOVE, onDialogMove)
@@ -282,6 +294,7 @@ onMounted(() => {
 
   bus.on(EVENT_KEY.REMOVE_MUTED, removeMuted)
 })
+
 onUnmounted(() => {
   bus.off(EVENT_KEY.SINGLE_CLICK_BROADCAST, click)
   bus.off(EVENT_KEY.DIALOG_MOVE, onDialogMove)
@@ -314,7 +327,6 @@ function onDialogMove({ tag, e }) {
 
 function onDialogEnd({ tag, isClose }) {
   if (state.commentVisible && tag === 'comment') {
-    console.log('isClose', isClose)
     _css(videoEl, 'transition-duration', `300ms`)
     if (isClose) {
       state.commentVisible = false
@@ -383,15 +395,14 @@ function pause() {
 }
 
 function touchstart(e) {
-  _stopPropagation(e)
+  stopPropagation(e)
   state.start.x = e.touches[0].pageX
   state.last.x = state.playX
   state.last.time = state.currentTime
 }
 
 function touchmove(e) {
-  // console.log('move',e)
-  _stopPropagation(e)
+  stopPropagation(e)
   state.isMove = true
   pause()
   const dx = e.touches[0].pageX - state.start.x
@@ -402,8 +413,7 @@ function touchmove(e) {
 }
 
 function touchend(e) {
-  // console.log('end', e)
-  _stopPropagation(e)
+  stopPropagation(e)
   if (isPlaying.value) return
   setTimeout(() => (state.isMove = false), 1000)
   videoEl.value.currentTime = state.currentTime

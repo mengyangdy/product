@@ -6,7 +6,7 @@ import axios, {
 
 import config from '../configs/index'
 
-import { _notice } from './index'
+import { notice } from './index'
 
 export const axiosInstance = axios.create({
   baseURL: config.baseUrl,
@@ -33,14 +33,12 @@ axiosInstance.interceptors.request.use(
  * */
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    // console.log('response',response)
     /*
      * 响应成功的拦截器，主要是对data作处理，如果没有返回data，那么会添加一个data字段，并把response.data的内容合并到data里面，然后返回
      * */
     const { data } = response
-    // console.log(response)
     if (data === undefined || data === null || data === '') {
-      _notice('请求失败，请稍后重试！')
+      notice('请求失败，请稍后重试！')
       return { success: false, code: 500, data: [] }
     } else if (typeof data === 'string') {
       return { success: true, code: 200, data }
@@ -62,7 +60,7 @@ axiosInstance.interceptors.response.use(
         data.success = true
       }
       if (resCode !== 200) {
-        _notice(response.data.message || '请求失败，请稍后重试！')
+        notice(response.data.message || '请求失败，请稍后重试！')
       } else {
         data.success = true
       }
@@ -73,22 +71,20 @@ axiosInstance.interceptors.response.use(
     return data
   },
   (error: AxiosError) => {
-    // console.log(error.response)
-    // console.log(error.response.status)
     if (error.response === undefined) {
-      _notice('服务器响应超时')
+      notice('服务器响应超时')
       return { success: false, code: 500, msg: '服务器响应超时', data: [] }
     }
     if (error.response.status >= 500) {
-      _notice('服务器出现错误')
+      notice('服务器出现错误')
       return { success: false, code: 500, msg: '服务器出现错误', data: [] }
     }
     if (error.response.status === 404) {
-      _notice('接口不存在')
+      notice('接口不存在')
       return { success: false, code: 404, msg: '接口不存在', data: [] }
     }
     if (error.response.status === 400) {
-      _notice('接口报错')
+      notice('接口报错')
       return { success: false, code: 400, msg: '接口报错', data: [] }
     }
     if (error.response.status === 401) {
@@ -96,7 +92,7 @@ axiosInstance.interceptors.response.use(
     }
     const data: any = error.response.data
     if (data === null || data === undefined) {
-      _notice('请求失败，请稍后重试！')
+      notice('请求失败，请稍后重试！')
       return { success: true, code: 200, data: [] }
     }
     const resCode = data.code
@@ -104,7 +100,7 @@ axiosInstance.interceptors.response.use(
       data.data = { ...data }
     }
     if (resCode && typeof resCode === 'number' && resCode !== 200) {
-      _notice('请求失败，请稍后重试！')
+      notice('请求失败，请稍后重试！')
     } else {
       data.code = 200
       data.success = true

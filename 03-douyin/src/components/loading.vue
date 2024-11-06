@@ -9,11 +9,11 @@
 </template>
 
 <script setup lang="ts">
-import { Prop } from 'vue'
+
 
 interface Props {
-  isFullScreen: boolean
-  type: string
+  isFullScreen?: boolean
+  type?: string
 }
 
 withDefaults(defineProps<Props>(), {
