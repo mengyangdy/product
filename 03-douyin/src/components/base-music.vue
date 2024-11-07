@@ -11,6 +11,21 @@
         <span :style="{ opacity: showMutedNotice ? 1 : 0 }">取消静音</span>
       </div>
     </div>
+    <img
+      v-click="
+        () =>
+          bus.emit(EVENT_KEY.NAV, {
+            path: '/home/music',
+            query: {
+              id: item.aweme_id
+            }
+          })
+      "
+      class="music"
+      :src="item.music?.cover_thumb.url_list[0]"
+      :style="style"
+      alt=""
+    />
   </div>
 </template>
 

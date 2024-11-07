@@ -26,7 +26,7 @@ export function no() {
  * @param min
  * @param max
  */
-export function random(min:number, max:number) {
+export function random(min: number, max: number) {
   const minCeiled = Math.ceil(min)
   const maxFloored = Math.floor(max)
   return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled)
@@ -43,6 +43,7 @@ export function checkImgUrl(url) {
   ) {
     return url
   }
+
   return IMG_URL + url
 }
 
@@ -74,12 +75,25 @@ export function getUserDouyinId(item) {
 }
 
 export function formatNumber(num: number) {
-  if(!num) return
+  if (!num) return
   if (num > 100000000) {
-    return (num / 100000000).toFixed(1) + '亿'
+    return `${(num / 100000000).toFixed(1)}亿`
   } else if (num > 10000) {
-    return (num / 10000).toFixed(1) + '万'
-  } else {
-    return num
-  }Ï
+    return `${(num / 10000).toFixed(1)}万`
+  }
+  return num
+}
+
+export function copy(val) {
+  const textarea = document.createElement('textarea')
+  document.body.appendChild(textarea)
+  textarea.style.position = 'absolute'
+  textarea.style.clip = 'rect(0 0 0 0)'
+  textarea.value = val
+  textarea.select()
+  if (document.execCommand) {
+    document.execCommand('copy', true)
+    notice('已复制')
+  }
+  document.body.removeChild(textarea)
 }

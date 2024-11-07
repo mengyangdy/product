@@ -104,16 +104,14 @@
 
 <script setup lang="ts">
 import { inject } from 'vue'
-import { deepClone } from '@dylanjs/utils'
+import { cloneDeep } from '@dylanjs/utils'
+import { Icon } from '@iconify/vue'
 
 import bus, { EVENT_KEY } from '@/utils/bus.ts'
 import { useClick } from '@/hooks/useClick.ts'
-
-import { formatNumber } from '../../utils'
-
 import BaseMusic from '@/components/base-music.vue'
 
-import {Icon} from '@iconify/vue'
+import { formatNumber } from '../../utils'
 
 interface Props {
   isMy?: boolean
@@ -136,7 +134,7 @@ const emit = defineEmits([
 const position = inject('position')
 
 const updateItem = (props, key, val) => {
-  const old = deepClone(props.item)
+  const old = cloneDeep(props.item)
   old[key] = val
   emit('update:item', old)
   bus.emit(EVENT_KEY.UPDATE_ITEM, {

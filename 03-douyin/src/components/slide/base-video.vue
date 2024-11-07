@@ -1,6 +1,5 @@
 <template>
   <div
-    ref="videoWrapper"
     class="video-wrapper"
     :class="positionName"
   >
@@ -136,10 +135,9 @@ import { SlideItemPlayStatus } from '@/utils/const_var'
 import { _css } from '@/utils/dom'
 
 import Loading from '../loading.vue'
-
-import ItemToolbar from './item-tool-bar.vue'
 import bus, { EVENT_KEY } from '../../utils/bus'
 
+import ItemToolbar from './item-tool-bar.vue'
 import ItemDesc from './item-desc.vue'
 
 defineOptions({
@@ -208,7 +206,7 @@ const state = reactive({
 })
 const poster = computed(() => {
   return checkImgUrl(
-    props.item.video.poster ?? props.item.video.cover.url_list[0]
+    props.item.video.poster || props.item.video.cover.url_list[0]
   )
 })
 const durationStyle = computed(() => {

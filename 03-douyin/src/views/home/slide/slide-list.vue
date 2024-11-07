@@ -132,6 +132,7 @@ async function getData(refresh = false) {
   if (!refresh && state.totalSize === state.list.length) return
   if (baseStore.loading) return
   baseStore.loading = true
+
   const res = await props.api({
     start: refresh ? 0 : state.list.length,
     pageSize: state.pageSize

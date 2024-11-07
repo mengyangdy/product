@@ -21,7 +21,14 @@ import SlideItem from '@/components/slide/slide-item.vue'
 import { SlideType } from '@/utils/const_var.ts'
 import { useMainStore } from '@/store'
 import bus, { EVENT_KEY } from '@/utils/bus.ts'
-import { getSlideOffset, slideInit, slideTouchEnd, slideTouchMove, slideTouchStart } from '@/utils/slide'
+import {
+  getSlideOffset,
+  slideInit,
+  slideReset,
+  slideTouchEnd,
+  slideTouchMove,
+  slideTouchStart
+} from '@/utils/slide'
 import { _css } from '@/utils/dom.ts'
 
 const props = defineProps({
@@ -118,7 +125,7 @@ watch(
   () => props.index,
   newV => {
     state.localIndex = newV
-    if (!proop?.list?.length) return
+    if (!props?.list?.length) return
     if (
       slideListEl.value &&
       slideListEl.value?.innerHTML &&
@@ -148,17 +155,17 @@ watch(
 
 watch(
   () => state.localIndex,
-  newV => {
+  (newV, oldV) => {
     bus.emit(EVENT_KEY.CURRENT_ITEM, props.list[newV])
     bus.emit(EVENT_KEY.SINGLE_CLICK_BROADCAST, {
       uniqueId: props.uniqueId,
-      index: newVal,
+      index: newV,
       type: EVENT_KEY.ITEM_PLAY
     })
     setTimeout(() => {
       bus.emit(EVENT_KEY.SINGLE_CLICK_BROADCAST, {
         uniqueId: props.uniqueId,
-        index: oldVal,
+        index: oldV,
         type: EVENT_KEY.ITEM_STOP
       })
     }, 200)
@@ -269,7 +276,6 @@ function getInsEl(item, index, play = false) {
     appInsMap.set(index, app)
     return ins.$el
   } catch (e) {
-  console.log("🚀 ~ getInsEl ~ e:", e)
   }
 }
 
@@ -283,6 +289,7 @@ function touchMove(e) {
 
 function touchEnd(e) {
   const isNext = state.move.y < 0
+  // 如果是第一个并且是下拉并且下拉距离大于刷新距离
   if (
     state.localIndex === 0 &&
     !isNext &&
@@ -294,6 +301,8 @@ function touchEnd(e) {
     const half = Number.parseInt((props.virtualTotal / 2).toString()) // 虚拟列表的一半
     if (props.list.length > props.virtualTotal) {
       // 手指往上滑(即列表展示下一条内容)
+      console.log("🚀 ~ file: slide-vertical-infinite.vue:306 ~ touchEnd ~ isNext~", isNext)
+
       if (isNext) {
         // 删除最前面的 `dom` ，然后在最后面添加一个 `dom`
         if (

@@ -20,9 +20,9 @@ export default {
   }
 }
 export const SlideType = {
-  HORIZONTAL: 0,
-  VERTICAL: 1,
-  VERTICAL_INFINITE: 2
+  HORIZONTAL: 0, // 水平
+  VERTICAL: 1, // 垂直
+  VERTICAL_INFINITE: 2 // 垂直无限
 }
 
 /* 图集操作状态 */

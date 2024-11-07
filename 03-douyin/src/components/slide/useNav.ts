@@ -1,5 +1,5 @@
 import { useRouter } from 'vue-router'
-import { deepClone } from '@dylanjs/utils'
+import { cloneDeep } from '@dylanjs/utils'
 
 import { useMainStore } from '@/store'
 
@@ -10,7 +10,7 @@ export function useNav() {
 
   return (path: any, query: any, data?: any) => {
     if (data) {
-      store.routeData = deepClone(data)
+      store.routeData = cloneDeep(data)
     }
     router.push({ path, query })
   }

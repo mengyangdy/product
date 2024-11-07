@@ -76,6 +76,7 @@ export function canSlide(state: any) {
       const angle =
         (Math.abs(state.move.x) * 10) / (Math.abs(state.move.y) * 10)
       // 根据当前slide的类型，判断能否滑动，并记录下来，后续不再判断，直接返回记录值
+      // 如果 angle 大于 1，则认为是水平滑动；如果小于等于 1，则认为是垂直滑动
       state.next = state.type === SlideType.HORIZONTAL ? angle > 1 : angle <= 1
       state.needCheck = false
     } else {
@@ -119,8 +120,10 @@ export function slideTouchMove(
   // 检测能否滑动
   const canSlideRes = canSlide(state)
   // 是否在往到头或尾滑动
+  // isNext 表示用户是否在尝试向“下一个”项目的方向滑动。这个判断是基于滑动的方向和当前的滑动类型
   const isNext =
     state.type === SlideType.HORIZONTAL ? state.move.x < 0 : state.move.y < 0
+
 
   if (state.type === SlideType.VERTICAL_INFINITE) {
     if (canSlideRes && state.localIndex === 0 && !isNext) {

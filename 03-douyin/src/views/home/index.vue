@@ -180,6 +180,17 @@
           @click="state.baseIndex = 1"
         />
       </SlideItem>
+      <SlideItem>
+        <UserPanel
+          ref="uploader"
+          v-model:current-item="state.currentItem"
+          :active="state.baseIndex === 2"
+          @toggle-can-move="e => (state.canMove = e)"
+          @back="state.baseIndex = 1"
+          @show-follow-setting="state.showFollowSetting = true"
+          @show-follow-setting2="state.showFollowSetting2 = true"
+        />
+      </SlideItem>
     </SlideHorizontal>
     <!--<BaseMask-->
     <!--  v-if="!isMobile"-->
@@ -212,7 +223,14 @@
 </template>
 
 <script setup lang="tsx">
-import { onMounted, reactive } from 'vue'
+import {
+  onActivated,
+  onDeactivated,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref
+} from 'vue'
 import { Icon } from '@iconify/vue'
 
 import { useNav } from '@/components/slide/useNav'
@@ -229,14 +247,17 @@ import FourSlideItem from '@/views/home/slide/four-slide-item.vue'
 import LongVideo from '@/views/home/slide/long-video.vue'
 import Community from '@/views/home/slide/community.vue'
 import BaseFooter from '@/components/base-footer.vue'
+import UserPanel from '@/components/user-panel.vue'
 
 import IndicatorHome from './components/indicator-home.vue'
 
 const nav = useNav()
 
-// const isMobile = ref(/Mobi|Android|iPhone/i.test(navigator.userAgent))
+const isMobile = ref(/Mobi|Android|iPhone/i.test(navigator.userAgent))
 
 const baseStore = useMainStore()
+
+const uploader = ref()
 
 const state = reactive({
   active: true,
@@ -269,11 +290,64 @@ const state = reactive({
   }
 })
 
+function setCurrentItem(item) {
+  if (!state.active) return
+  if (state.baseIndex !== 1) return
+  if (state.currentItem.author.uid !== item.author.uid) {
+    state.currentItem = {
+      ...item,
+      isRequest: false,
+      aweme_list: []
+    }
+  }
+}
+
 onMounted(() => {
   bus.on(EVENT_KEY.ENTER_FULLSCREEN, () => {
     if (!state.active) return
     state.fullScreen = true
   })
+  bus.on(EVENT_KEY.EXIT_FULLSCREEN, () => {
+    if (!state.active) return
+    state.fullScreen = false
+  })
+  bus.on(EVENT_KEY.OPEN_COMMENTS, () => {
+    if (!state.active) return
+    bus.emit(EVENT_KEY.ENTER_FULLSCREEN)
+    state.commentVisible = true
+  })
+  bus.on(EVENT_KEY.CLOSE_COMMENTS, () => {
+    if (!state.active) return
+    bus.emit(EVENT_KEY.EXIT_FULLSCREEN)
+    state.commentVisible = false
+  })
+  bus.on(EVENT_KEY.SHOW_SHARE, () => {
+    if (!state.active) return
+    state.isSharing = true
+  })
+  bus.on(EVENT_KEY.NAV, ({ path, query }) => {
+    if (!state.active) return
+    nav(path, query)
+  })
+  bus.on(EVENT_KEY.GO_USERINFO, () => {
+    if (!state.active) return
+    state.baseIndex = 2
+  })
+  bus.on(EVENT_KEY.CURRENT_ITEM, setCurrentItem)
+})
+
+onUnmounted(() => {
+  bus.offAll()
+})
+
+onActivated(() => {
+  state.active = true
+  bus.emit(EVENT_KEY.TOGGLE_CURRENT_VIDEO)
+})
+
+onDeactivated(() => {
+  state.active = false
+  bus.emit(EVENT_KEY.TOGGLE_CURRENT_VIDEO)
 })
 </script>
 
