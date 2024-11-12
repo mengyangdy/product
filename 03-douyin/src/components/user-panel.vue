@@ -313,13 +313,13 @@
             />
             <span class="name">{{ item.name }}</span>
             <span class="tips">可能感兴趣的人</span>
-            <!--<DyButton type="primary">关注</DyButton>-->
-            <!--<div class="close">-->
-            <!--  <DyBack-->
-            <!--    img="close"-->
-            <!--    scale=".6"-->
-            <!--  ></DyBack>-->
-            <!--</div>-->
+            <BaseButton type="primary">关注</BaseButton>
+            <div class="close">
+              <DyBack
+                img="close"
+                scale=".6"
+              ></DyBack>
+            </div>
           </div>
           <div
             class="more"
@@ -376,6 +376,7 @@ import { useMainStore } from '@/store'
 import { userVideoList } from '@/api/user.ts'
 import Posters from '@/components/posters.vue'
 import { DefaultUser } from '@/utils/const_var.ts'
+import BaseButton from '@/components/base-button.vue'
 
 const props = defineProps({
   currentItem: {
